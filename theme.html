@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Card UI</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 3px solid #00bfff;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-top: -25px;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #00bfff;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            margin-top: 10px;
+        }
+
+        .profile-title {
+            font-size: 1rem;
+            color: #b0b0b0;
+        }
+
+        .profile-description {
+            font-size: 0.9rem;
+            padding: 10px;
+            color: #c5c5c5;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-custom {
+            background-color: #1c1c1e;
+            color: white;
+            border: 1px solid #2c2c2e;
+            border-radius: 20px;
+        }
+
+        .btn-custom:hover {
+            background-color: #2a2a2e;
+        }
+
+        .social-icons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            width: 70px;
+            height: 70px;
+            background-color: #2a2a2a;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .social-icons a:hover {
+            background-color: #444444;
+        }
+
+        .social-icons img {
+            width: 40px;
+            height: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Banner Section -->
+    <div class="banner">
+        <img class="img-fluid" src="banner-test.png" alt="banner">
+    </div>
+
+    <!-- Profile Section -->
+    <div class="container profile-section">
+        <img src="profile.png" alt="Profile Picture" class="profile-pic">
+        <div class="profile-name">Abu Hamza</div>
+        <div class="profile-title">C.M.O @ Enemy Group</div>
+        <p class="profile-description">
+            Co-Creating Enemy Group | Replacing your old paper card with a smarter and instant way of networking.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="btn-group mb-3">
+            <button class="btn btn-custom">Connect With Me</button>
+            <button class="btn btn-custom">Save To Phone</button>
+        </div>
+    </div>
+
+    <!-- Social Media Links Section -->
+    <div class="container social-icons">
+    <div class="row">
+        <div class="col">
+        <a href="#"><img src="https://img.icons8.com/fluency/48/whatsapp.png" alt="WhatsApp"></a>
+        </div>
+        <div class="col">
+        <a href="#"><img src="https://img.icons8.com/color/48/email.png" alt="Email"></a>
+        </div>
+        <div class="col">
+        <a href="#"><img src="https://img.icons8.com/color/48/safari.png" alt="Website"></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+        <a href="#"><img src="https://img.icons8.com/color/48/linkedin.png" alt="LinkedIn"></a>
+        </div>
+        <div class="col">
+        <a href="#"><img src="https://img.icons8.com/color/48/instagram-new.png" alt="Instagram"></a>
+        </div>
+        <div class="col">
+        <a href="#"><img src="https://img.icons8.com/color/48/youtube-play.png" alt="YouTube"></a>
+       </div>
+        <!-- <a href="#"><img src="https://img.icons8.com/color/48/pinterest.png" alt="Pinterest"></a> -->
+    </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
