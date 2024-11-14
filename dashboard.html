@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Smart Business Card</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .form-section {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .alert-floating {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1001;
+        display: none;
+      }
+
+      .image-preview {
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .preview-image {
+        max-height: 100px;
+        max-width: 200px;
+        object-fit: cover;
+        margin-right: 10px;
+      }
+
+      .image-upload-container {
+        position: relative;
+      }
+
+      .remove-image {
+        margin-left: 10px;
+      }
+    </style>
+    <script src="js/auth.js"></script>
+    <script>
+      // Check authentication
+      if (!isAuthenticated()) {
+        redirectToLogin();
+      }
+    </script>
+  </head>
+  <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="#">Smart Business Card</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="logout()">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container my-5">
+      <h2 class="mb-4">Profile Settings</h2>
+      <form id="profileForm" onsubmit="handleSubmit(event)">
+        <!-- Basic Information -->
+        <div class="form-section">
+          <h4 class="mb-3">Basic Information</h4>
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" name="name" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Headline</label>
+            <input type="text" class="form-control" name="headline" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Profile Picture</label>
+            <div class="image-upload-container">
+              <input
+                type="file"
+                class="form-control"
+                name="avatar"
+                accept="image/*"
+              />
+              <div
+                class="image-preview"
+                id="avatarPreview"
+                style="display: none"
+              >
+                <img src="" alt="Profile Picture" class="preview-image" />
+                <button
+                  type="button"
+                  class="btn btn-sm btn-danger remove-image"
+                  onclick="removeImage('avatar')"
+                >
+                  Remove Image
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Background Image</label>
+            <div class="image-upload-container">
+              <input
+                type="file"
+                class="form-control"
+                name="backgroundImage"
+                accept="image/*"
+              />
+              <div
+                class="image-preview"
+                id="backgroundImagePreview"
+                style="display: none"
+              >
+                <img src="" alt="Background Image" class="preview-image" />
+                <button
+                  type="button"
+                  class="btn btn-sm btn-danger remove-image"
+                  onclick="removeImage('backgroundImage')"
+                >
+                  Remove Image
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="form-section">
+          <h4 class="mb-3">Contact Information</h4>
+          <div class="mb-3">
+            <label class="form-label">WhatsApp</label>
+            <input type="text" class="form-control" name="whatsapp" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" name="address" rows="3"></textarea>
+          </div>
+        </div>
+
+        <!-- Social Accounts -->
+        <div class="form-section">
+          <h4 class="mb-3">Social Accounts</h4>
+          <div id="socialAccounts">
+            <div class="row mb-3">
+              <div class="col">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Account Type"
+                />
+              </div>
+              <div class="col">
+                <input type="text" class="form-control" placeholder="Handle" />
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="addSocialAccount()"
+          >
+            Add More
+          </button>
+        </div>
+
+        <!-- Services -->
+        <div class="form-section">
+          <h4 class="mb-3">Services</h4>
+          <div id="services">
+            <div class="service-item mb-3">
+              <div class="row">
+                <div class="col-md-6 mb-2">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Service Name"
+                  />
+                </div>
+                <div class="col-md-6 mb-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Price"
+                  />
+                </div>
+              </div>
+              <div class="mb-2">
+                <textarea
+                  class="form-control"
+                  placeholder="Description"
+                  rows="2"
+                ></textarea>
+              </div>
+              <div>
+                <input
+                  type="file"
+                  class="form-control"
+                  placeholder="Service Image"
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="addService()"
+          >
+            Add Service
+          </button>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      function addSocialAccount() {
+        const socialAccounts = document.getElementById("socialAccounts");
+        const newAccount = document.createElement("div");
+        newAccount.className = "row mb-3";
+        newAccount.innerHTML = `
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Account Type">
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Handle">
+                </div>
+            `;
+        socialAccounts.appendChild(newAccount);
+      }
+
+      function addService() {
+        const services = document.getElementById("services");
+        const newService = document.createElement("div");
+        newService.className = "service-item mb-3";
+        newService.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <input type="text" class="form-control" placeholder="Service Name">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <input type="number" class="form-control" placeholder="Price">
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <textarea class="form-control" placeholder="Description" rows="2"></textarea>
+                </div>
+                <div>
+                    <input type="file" class="form-control" placeholder="Service Image">
+                </div>
+            `;
+        services.appendChild(newService);
+      }
+
+      function updateImagePreview(inputName, imageUrl) {
+        const previewDiv = document.getElementById(`${inputName}Preview`);
+        if (!previewDiv) return;
+
+        const previewImg = previewDiv.querySelector("img");
+        if (!previewImg) return;
+
+        if (imageUrl) {
+          previewImg.src = imageUrl;
+          previewDiv.style.display = "block";
+        } else {
+          previewDiv.style.display = "none";
+        }
+      }
+
+      function removeImage(inputName) {
+        const input = document.querySelector(`[name="${inputName}"]`);
+        input.value = ""; // Clear the file input
+        updateImagePreview(inputName, null);
+
+        // Store that we want to remove this image on save
+        input.dataset.removeImage = "true";
+      }
+
+      // Utility functions
+      function showLoading() {
+        document.getElementById("loadingOverlay").style.display = "flex";
+      }
+
+      function hideLoading() {
+        document.getElementById("loadingOverlay").style.display = "none";
+      }
+
+      function showAlert(message, type = "success") {
+        const alert = document.getElementById("alertMessage");
+        alert.className = `alert alert-${type} alert-floating`;
+        alert.textContent = message;
+        alert.style.display = "block";
+        setTimeout(() => {
+          alert.style.display = "none";
+        }, 3000);
+      }
+
+      // Load user data
+      async function loadUserData() {
+        try {
+          const userData = JSON.parse(localStorage.getItem("user"));
+          if (!userData) return;
+
+          // Basic Information
+          document.querySelector('[name="name"]').value = userData.name || "";
+          document.querySelector('[name="email"]').value = userData.email || "";
+
+          const savedProfile = await fetchUserProfile(userData.id);
+          if (savedProfile) {
+            console.log("Loaded profile:", savedProfile); // Debug log
+
+            // Basic Information
+            document.querySelector('[name="headline"]').value =
+              savedProfile.headline || "";
+            document.querySelector('[name="whatsapp"]').value =
+              savedProfile.whatsapp || "";
+            document.querySelector('[name="address"]').value =
+              savedProfile.address || "";
+
+            // Images
+            if (savedProfile.avatar) {
+              updateImagePreview("avatar", savedProfile.avatar);
+            }
+            if (savedProfile.backgroundImage) {
+              updateImagePreview(
+                "backgroundImage",
+                savedProfile.backgroundImage
+              );
+            }
+
+            // Social Accounts
+            if (
+              savedProfile.socialAccounts &&
+              savedProfile.socialAccounts.length > 0
+            ) {
+              const socialAccountsDiv =
+                document.getElementById("socialAccounts");
+              if (socialAccountsDiv) {
+                socialAccountsDiv.innerHTML = ""; // Clear default row
+                savedProfile.socialAccounts.forEach((account) => {
+                  const newAccount = document.createElement("div");
+                  newAccount.className = "row mb-3";
+                  newAccount.innerHTML = `
+                    <div class="col">
+                      <input type="text" class="form-control" placeholder="Account Type" value="${
+                        account.accountType || ""
+                      }">
+                    </div>
+                    <div class="col">
+                      <input type="text" class="form-control" placeholder="Handle" value="${
+                        account.handle || ""
+                      }">
+                    </div>
+                  `;
+                  socialAccountsDiv.appendChild(newAccount);
+                });
+              }
+            }
+
+            // Services
+            if (savedProfile.services && savedProfile.services.length > 0) {
+              const servicesDiv = document.getElementById("services");
+              if (servicesDiv) {
+                servicesDiv.innerHTML = ""; // Clear default service
+                savedProfile.services.forEach((service) => {
+                  const newService = document.createElement("div");
+                  newService.className = "service-item mb-3";
+                  newService.innerHTML = `
+                    <div class="row">
+                      <div class="col-md-6 mb-2">
+                        <input type="text" class="form-control" placeholder="Service Name" value="${
+                          service.name || ""
+                        }">
+                      </div>
+                      <div class="col-md-6 mb-2">
+                        <input type="number" class="form-control" placeholder="Price" value="${
+                          service.price || ""
+                        }">
+                      </div>
+                    </div>
+                    <div class="mb-2">
+                      <textarea class="form-control" placeholder="Description" rows="2">${
+                        service.description || ""
+                      }</textarea>
+                    </div>
+                    <div class="image-upload-container">
+                      <input type="file" class="form-control" placeholder="Service Image" accept="image/*">
+                      ${
+                        service.productImage
+                          ? `
+                        <div class="image-preview" style="display: block;">
+                          <img src="${service.productImage}" alt="Service Image" class="preview-image">
+                          <button type="button" class="btn btn-sm btn-danger remove-image" onclick="removeServiceImage(this)">
+                            Remove Image
+                          </button>
+                        </div>
+                      `
+                          : ""
+                      }
+                    </div>
+                  `;
+                  servicesDiv.appendChild(newService);
+                });
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error loading user data:", error);
+          showAlert("Error loading profile data", "danger");
+        }
+      }
+
+      async function fetchUserProfile(userId) {
+        try {
+          const response = await fetch(
+            `https://rfc-backend.onrender.com/user/get/${userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+              },
+            }
+          );
+          if (!response.ok) return null;
+          return await response.json();
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+          return null;
+        }
+      }
+
+      async function uploadImage(file) {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+          const response = await fetch(
+            "https://rfc-backend.onrender.com/util/upload-image",
+            {
+              method: "POST",
+              body: formData,
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+              },
+            }
+          );
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message);
+          return data.imageUrl;
+        } catch (error) {
+          throw new Error("Image upload failed");
+        }
+      }
+
+      // Add function to remove service images
+      function removeServiceImage(button) {
+        const previewDiv = button.closest(".image-preview");
+        const fileInput = previewDiv.previousElementSibling;
+        fileInput.value = "";
+        previewDiv.style.display = "none";
+        fileInput.dataset.removeImage = "true";
+      }
+
+      // Update the handleSubmit function to properly handle service images
+      async function handleSubmit(event) {
+        event.preventDefault();
+        showLoading();
+
+        try {
+          const userData = JSON.parse(localStorage.getItem("user"));
+          const form = event.target;
+
+          // Handle avatar and background image uploads
+          const avatarInput = form.avatar;
+          const backgroundInput = form.backgroundImage;
+
+          let avatarUrl = null;
+          let backgroundUrl = null;
+
+          if (avatarInput.files[0]) {
+            avatarUrl = await uploadImage(avatarInput.files[0]);
+          } else if (!avatarInput.dataset.removeImage) {
+            const savedProfile = await fetchUserProfile(userData.id);
+            avatarUrl = savedProfile?.avatar;
+          }
+
+          if (backgroundInput.files[0]) {
+            backgroundUrl = await uploadImage(backgroundInput.files[0]);
+          } else if (!backgroundInput.dataset.removeImage) {
+            const savedProfile = await fetchUserProfile(userData.id);
+            backgroundUrl = savedProfile?.backgroundImage;
+          }
+
+          // Collect social accounts
+          const socialAccounts = Array.from(
+            document.getElementById("socialAccounts").children
+          )
+            .map((row) => ({
+              accountType: row.querySelector(".col:nth-child(1) input").value,
+              handle: row.querySelector(".col:nth-child(2) input").value,
+            }))
+            .filter((account) => account.accountType && account.handle);
+
+          // Collect services
+          const services = [];
+          const serviceItems = document.getElementById("services").children;
+          for (const serviceDiv of serviceItems) {
+            const serviceFile =
+              serviceDiv.querySelector('input[type="file"]').files[0];
+            const existingImage =
+              serviceDiv.querySelector(".preview-image")?.src;
+            const fileInput = serviceDiv.querySelector('input[type="file"]');
+
+            let productImage = null;
+            if (serviceFile) {
+              productImage = await uploadImage(serviceFile);
+            } else if (!fileInput.dataset.removeImage && existingImage) {
+              productImage = existingImage;
+            }
+
+            const nameInput = serviceDiv.querySelector(
+              'input[placeholder="Service Name"]'
+            );
+            const priceInput = serviceDiv.querySelector(
+              'input[placeholder="Price"]'
+            );
+            const descriptionInput = serviceDiv.querySelector("textarea");
+
+            if (
+              nameInput.value ||
+              priceInput.value ||
+              descriptionInput.value ||
+              productImage
+            ) {
+              services.push({
+                name: nameInput.value,
+                price: Number(priceInput.value) || 0,
+                description: descriptionInput.value,
+                productImage,
+              });
+            }
+          }
+
+          const formData = {
+            name: form.name.value,
+            headline: form.headline.value,
+            avatar: avatarUrl,
+            backgroundImage: backgroundUrl,
+            whatsapp: form.whatsapp.value,
+            email: form.email.value,
+            address: form.address.value,
+            socialAccounts,
+            services,
+          };
+
+          const response = await fetch(
+            `https://rfc-backend.onrender.com/user/${userData.id}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+              },
+              body: JSON.stringify(formData),
+            }
+          );
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.message);
+
+          showAlert("Profile updated successfully!");
+        } catch (error) {
+          showAlert(error.message, "danger");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      // Load user data when page loads
+      document.addEventListener("DOMContentLoaded", loadUserData);
+
+      // Add event listeners for file inputs
+      document.addEventListener("DOMContentLoaded", () => {
+        document
+          .querySelector('[name="avatar"]')
+          ?.addEventListener("change", function (e) {
+            if (this.files[0]) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                updateImagePreview("avatar", e.target.result);
+              };
+              reader.readAsDataURL(this.files[0]);
+              this.dataset.removeImage = "false";
+            }
+          });
+
+        document
+          .querySelector('[name="backgroundImage"]')
+          ?.addEventListener("change", function (e) {
+            if (this.files[0]) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                updateImagePreview("backgroundImage", e.target.result);
+              };
+              reader.readAsDataURL(this.files[0]);
+              this.dataset.removeImage = "false";
+            }
+          });
+      });
+    </script>
+  </body>
+</html>
