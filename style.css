@@ -76,49 +76,11 @@ nav{
   }
 
   /* form */
-  .contact-form-container {
-    max-width: 700px;
-    margin: 60px auto;
-    padding: 40px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+#form{
+    margin-bottom: 3rem !important;
 }
-.contact-form h2 {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-}
-.contact-form p {
-    color: #666;
-    font-size: 0.95rem;
-    margin-bottom: 30px;
-}
-.form-control {
-    border-radius: 8px;
-    background-color: #f7f9fc;
-    border: 1px solid #ddd;
-    transition: all 0.3s ease;
-}
-.form-control:focus {
-    border-color: #5c9ded;
-    box-shadow: 0 0 5px rgba(92, 157, 237, 0.5);
-}
-.btn-custom {
-    background-color: #5c9ded;
-    color: #fff;
-    font-weight: bold;
-    padding: 12px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-    text-transform: uppercase;
-}
-.btn-custom:hover {
-    background-color: #4a8ac7;
-    color: #fff;
+#form .form-btn{
+    background-color: #ffa726;
 }
 
 /* footer */
