@@ -159,10 +159,11 @@
     <script>
       // Add a check for CONFIG
       async function fetchUserProfile(userUrl) {
+        console.log(
+          "Fetching user profile...",
+          `${CONFIG.API_BASE_URL}/user/url/${userUrl}`
+        );
         try {
-          if (!CONFIG || !CONFIG.API_BASE_URL) {
-            throw new Error("CONFIG is not properly initialized");
-          }
           const response = await fetch(
             `${CONFIG.API_BASE_URL}/user/url/${userUrl}`
           );
