@@ -384,7 +384,8 @@
             throw new Error("Failed to fetch user data");
           }
 
-          const userData = await response.json();
+          let userData = await response.json();
+          userData = userData.user;
           console.log("user data from API:", userData);
 
           // Basic Information
