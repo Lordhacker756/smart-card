@@ -371,125 +371,110 @@
 
       // Load user data
       async function loadUserData() {
+        console.log("Fetching user data...");
         try {
-          const userData = JSON.parse(localStorage.getItem("user"));
-          if (!userData) return;
+          const jwt = localStorage.getItem("jwt");
+          const response = await fetch(`${CONFIG.API_BASE_URL}/user/me`, {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+
+          const userData = await response.json();
+          console.log("user data from API:", userData);
 
           // Basic Information
           document.querySelector('[name="name"]').value = userData.name || "";
           document.querySelector('[name="email"]').value = userData.email || "";
 
-          const savedProfile = await fetchUserProfile(userData.id);
-          if (savedProfile) {
-            console.log("Loaded profile:", savedProfile);
+          // Set URL
+          document.querySelector('[name="cardUrl"]').value = userData.url || "";
 
-            // Set URL
-            document.querySelector('[name="cardUrl"]').value =
-              savedProfile.url || "";
+          // Set theme
+          document.querySelector('[name="activeTheme"]').value =
+            userData.activeTheme || "theme1";
 
-            // Set theme
-            document.querySelector('[name="activeTheme"]').value =
-              savedProfile.activeTheme || "theme1";
+          // Basic Information
+          document.querySelector('[name="headline"]').value =
+            userData.headline || "";
+          document.querySelector('[name="whatsapp"]').value =
+            userData.whatsapp || "";
+          document.querySelector('[name="address"]').value =
+            userData.address || "";
 
-            // Basic Information
-            document.querySelector('[name="headline"]').value =
-              savedProfile.headline || "";
-            document.querySelector('[name="whatsapp"]').value =
-              savedProfile.whatsapp || "";
-            document.querySelector('[name="address"]').value =
-              savedProfile.address || "";
-
-            // Social Accounts
-            if (savedProfile.socialAccounts) {
-              savedProfile.socialAccounts.forEach((account) => {
-                const input = document.querySelector(
-                  `[name="${account.accountType.toLowerCase()}"]`
-                );
-                if (input) {
-                  input.value = account.handle || "";
-                }
-              });
-            }
-
-            // Images
-            if (savedProfile.avatar) {
-              updateImagePreview("avatar", savedProfile.avatar);
-            }
-            if (savedProfile.backgroundImage) {
-              updateImagePreview(
-                "backgroundImage",
-                savedProfile.backgroundImage
+          // Social Accounts
+          if (userData.socialAccounts) {
+            userData.socialAccounts.forEach((account) => {
+              const input = document.querySelector(
+                `[name="${account.accountType.toLowerCase()}"]`
               );
-            }
-
-            // Services
-            if (savedProfile.services && savedProfile.services.length > 0) {
-              const servicesDiv = document.getElementById("services");
-              if (servicesDiv) {
-                servicesDiv.innerHTML = ""; // Clear default service
-                savedProfile.services.forEach((service) => {
-                  const newService = document.createElement("div");
-                  newService.className = "service-item mb-3";
-                  newService.innerHTML = `
-                    <div class="row">
-                      <div class="col-md-6 mb-2">
-                        <input type="text" class="form-control" placeholder="Service Name" value="${
-                          service.name || ""
-                        }">
-                      </div>
-                      <div class="col-md-6 mb-2">
-                        <input type="number" class="form-control" placeholder="Price" value="${
-                          service.price || ""
-                        }">
-                      </div>
-                    </div>
-                    <div class="mb-2">
-                      <textarea class="form-control" placeholder="Description" rows="2">${
-                        service.description || ""
-                      }</textarea>
-                    </div>
-                    <div class="image-upload-container">
-                      <input type="file" class="form-control" placeholder="Service Image" accept="image/*">
-                      ${
-                        service.productImage
-                          ? `
-                        <div class="image-preview" style="display: block;">
-                          <img src="${service.productImage}" alt="Service Image" class="preview-image">
-                          <button type="button" class="btn btn-sm btn-danger remove-image" onclick="removeServiceImage(this)">
-                            Remove Image
-                          </button>
-                        </div>
-                      `
-                          : ""
-                      }
-                    </div>
-                  `;
-                  servicesDiv.appendChild(newService);
-                });
+              if (input) {
+                input.value = account.handle || "";
               }
+            });
+          }
+
+          // Images
+          if (userData.avatar) {
+            updateImagePreview("avatar", userData.avatar);
+          }
+          if (userData.backgroundImage) {
+            updateImagePreview("backgroundImage", userData.backgroundImage);
+          }
+
+          // Services
+          if (userData.services && userData.services.length > 0) {
+            const servicesDiv = document.getElementById("services");
+            if (servicesDiv) {
+              servicesDiv.innerHTML = ""; // Clear default service
+              userData.services.forEach((service) => {
+                const newService = document.createElement("div");
+                newService.className = "service-item mb-3";
+                newService.innerHTML = `
+                  <div class="row">
+                    <div class="col-md-6 mb-2">
+                      <input type="text" class="form-control" placeholder="Service Name" value="${
+                        service.name || ""
+                      }">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                      <input type="number" class="form-control" placeholder="Price" value="${
+                        service.price || ""
+                      }">
+                    </div>
+                  </div>
+                  <div class="mb-2">
+                    <textarea class="form-control" placeholder="Description" rows="2">${
+                      service.description || ""
+                    }</textarea>
+                  </div>
+                  <div class="image-upload-container">
+                    <input type="file" class="form-control" placeholder="Service Image" accept="image/*">
+                    ${
+                      service.productImage
+                        ? `
+                      <div class="image-preview" style="display: block;">
+                        <img src="${service.productImage}" alt="Service Image" class="preview-image">
+                        <button type="button" class="btn btn-sm btn-danger remove-image" onclick="removeServiceImage(this)">
+                          Remove Image
+                        </button>
+                      </div>
+                    `
+                        : ""
+                    }
+                  </div>
+                `;
+                servicesDiv.appendChild(newService);
+              });
             }
           }
         } catch (error) {
           console.error("Error loading user data:", error);
           showAlert("Error loading profile data", "danger");
-        }
-      }
-
-      async function fetchUserProfile(userId) {
-        try {
-          const response = await fetch(
-            `${CONFIG.API_BASE_URL}/user/get/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-              },
-            }
-          );
-          if (!response.ok) return null;
-          return await response.json();
-        } catch (error) {
-          console.error("Error fetching profile:", error);
-          return null;
         }
       }
 
@@ -525,13 +510,12 @@
         fileInput.dataset.removeImage = "true";
       }
 
-      // Update the handleSubmit function to properly handle service images
+      // Update the handleSubmit function to use the /me endpoint
       async function handleSubmit(event) {
         event.preventDefault();
         showLoading();
 
         try {
-          const userData = JSON.parse(localStorage.getItem("user"));
           const form = event.target;
 
           // Handle avatar and background image uploads
@@ -544,15 +528,25 @@
           if (avatarInput.files[0]) {
             avatarUrl = await uploadImage(avatarInput.files[0]);
           } else if (!avatarInput.dataset.removeImage) {
-            const savedProfile = await fetchUserProfile(userData.id);
-            avatarUrl = savedProfile?.avatar;
+            const response = await fetch(`${CONFIG.API_BASE_URL}/user/me`, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+              },
+            });
+            const userData = await response.json();
+            avatarUrl = userData?.avatar;
           }
 
           if (backgroundInput.files[0]) {
             backgroundUrl = await uploadImage(backgroundInput.files[0]);
           } else if (!backgroundInput.dataset.removeImage) {
-            const savedProfile = await fetchUserProfile(userData.id);
-            backgroundUrl = savedProfile?.backgroundImage;
+            const response = await fetch(`${CONFIG.API_BASE_URL}/user/me`, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+              },
+            });
+            const userData = await response.json();
+            backgroundUrl = userData?.backgroundImage;
           }
 
           // Collect social accounts
@@ -621,17 +615,14 @@
             services,
           };
 
-          const response = await fetch(
-            `${CONFIG.API_BASE_URL}/user/${userData.id}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-              },
-              body: JSON.stringify(formData),
-            }
-          );
+          const response = await fetch(`${CONFIG.API_BASE_URL}/user/me`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            },
+            body: JSON.stringify(formData),
+          });
 
           const data = await response.json();
           if (!response.ok) throw new Error(data.message);
