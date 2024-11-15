@@ -184,12 +184,12 @@
           return;
         }
 
-        const userData = await fetchUserProfile(userUrl);
+        let userData = await fetchUserProfile(userUrl);
         if (!userData) {
           console.error("Could not fetch user data");
           return;
         }
-
+        userData = userData.data;
         console.log("Loaded user data:", userData);
 
         // Update basic information
