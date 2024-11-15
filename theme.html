@@ -16,6 +16,10 @@
         font-family: "Arial", sans-serif;
       }
 
+      .container{
+        justify-items: center;
+      }
+
       .banner {
         display: flex;
         align-items: center;
@@ -140,7 +144,7 @@
       <!-- Action Buttons -->
       <div class="btn-group mb-3">
         <button class="btn btn-custom">Connect With Me</button>
-        <button class="btn btn-custom">Save To Phone</button>
+        <button id="save" class="btn btn-custom">Save To Phone</button>
       </div>
     </div>
 
@@ -192,12 +196,57 @@
         <!-- <a href="#"><img src="https://img.icons8.com/color/48/pinterest.png" alt="Pinterest"></a> -->
       </div>
     </div>
-
+    <!-- Bootstrap Contact Section -->
+<section class="container bg-dark text-white py-4">
+  <div class="container">
+    <div class="d-flex flex-column align-items-start">
+      <!-- Phone -->
+      <div class="d-flex align-items-center mb-3">
+        <i class="bi bi-telephone-fill fs-4 me-3"></i>
+        <a href="tel:+971585222111" class="text-white text-decoration-none">+971 585222111</a>
+      </div>
+      <!-- Email -->
+      <div class="d-flex align-items-center mb-3">
+        <i class="bi bi-envelope-fill fs-4 me-3"></i>
+        <a href="mailto:b12.dxb12@gmail.com" class="text-white text-decoration-none">b12.dxb12@gmail.com</a>
+      </div>
+      <!-- Address -->
+      <div class="d-flex align-items-center">
+        <i class="bi bi-geo-alt-fill fs-4 me-3"></i>
+        <p class="mb-0">11A Street, Al Quoz - Al Quoz Industrial Area 3, Dubai</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- third section -->
+<section class="py-5">
+  <div class="container">
+    <!-- Heading -->
+    <h3 class="text-center fw-bold">PRODUCTS AND SERVICES</h3>
+    <hr class="mx-auto" style="width: 50px; border-top: 2px solid red;">
+    
+    <!-- Product Card -->
+    <div class="bg-light p-4 mt-4">
+      <h5 class="fw-bold">RR GHOST 2019</h5>
+      
+      <!-- Image Section -->
+      <img src="https://via.placeholder.com/500x300" alt="RR Ghost 2019" class="img-fluid mb-3">
+      
+      <!-- Price and Inquiry Button -->
+      <div class="d-flex align-items-center">
+        <span class="me-3">Price:</span>
+        <button class="btn btn-dark">Enquiry</button>
+      </div>
+    </div>
+  </div>
+</section>
     <!-- Bootstrap JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Add this just before the closing body tag -->
     <script>
+
       async function fetchUserProfile(userId) {
         try {
           const response = await fetch(
