@@ -59,7 +59,7 @@
             <span id="loginButtonText">Login</span>
           </button>
           <p class="text-center mt-3">
-            Don't have an account? <a href="register.html">Register here</a>
+            Don't have an account? <a href="/register">Register here</a>
           </p>
         </form>
 
@@ -111,7 +111,7 @@
               }).showToast();
 
               localStorage.setItem("jwt", data.token);
-              window.location.href = "/dashboard.html";
+              window.location.href = "/dashboard";
             } catch (error) {
               // Show error toast
               Toastify({
