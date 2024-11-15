@@ -65,6 +65,7 @@
 
         <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
         <script src="js/auth.js"></script>
+        <script src="js/config.js"></script>
         <script>
           async function handleLogin(event) {
             event.preventDefault();
@@ -81,13 +82,16 @@
             const password = document.getElementById("password").value;
 
             try {
-              const response = await fetch("http://localhost:5000/auth/login", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-              });
+              const response = await fetch(
+                `${CONFIG.API_BASE_URL}/auth/login`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ email, password }),
+                }
+              );
 
               const data = await response.json();
 
