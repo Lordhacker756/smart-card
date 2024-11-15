@@ -146,62 +146,17 @@
 
     <!-- Social Media Links Section -->
     <div class="container social-icons">
-      <div class="row">
-        <div class="col">
-          <a href="#"
-            ><img
-              src="https://img.icons8.com/fluency/48/whatsapp.png"
-              alt="WhatsApp"
-          /></a>
-        </div>
-        <div class="col">
-          <a href="#"
-            ><img src="https://img.icons8.com/color/48/email.png" alt="Email"
-          /></a>
-        </div>
-        <div class="col">
-          <a href="#"
-            ><img
-              src="https://img.icons8.com/color/48/safari.png"
-              alt="Website"
-          /></a>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <a href="#"
-            ><img
-              src="https://img.icons8.com/color/48/linkedin.png"
-              alt="LinkedIn"
-          /></a>
-        </div>
-        <div class="col">
-          <a href="#"
-            ><img
-              src="https://img.icons8.com/color/48/instagram-new.png"
-              alt="Instagram"
-          /></a>
-        </div>
-        <div class="col">
-          <a href="#"
-            ><img
-              src="https://img.icons8.com/color/48/youtube-play.png"
-              alt="YouTube"
-          /></a>
-        </div>
-        <!-- <a href="#"><img src="https://img.icons8.com/color/48/pinterest.png" alt="Pinterest"></a> -->
-      </div>
+      <!-- Social media icons will populate here -->
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Add this just before the closing body tag -->
     <script>
-      async function fetchUserProfile(userId) {
+      async function fetchUserProfile(userUrl) {
         try {
           const response = await fetch(
-            `https://rfc-backend.onrender.com/user/get/${userId}`
+            `http://localhost:5000/user/url/${userUrl}`
           );
           if (!response.ok) return null;
           return await response.json();
@@ -212,22 +167,22 @@
       }
 
       async function loadUserData() {
-        // Extract userId from URL query parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get("userId");
+        // Extract the user URL from the path
+        const userUrl = window.location.pathname.split("/").pop();
+        console.log("User URL:", userUrl, window.location.pathname);
 
-        if (!userId) {
-          console.error("No userId provided in URL");
+        if (!userUrl) {
+          console.error("No user URL provided in the path");
           return;
         }
 
-        const userData = await fetchUserProfile(userId);
+        const userData = await fetchUserProfile(userUrl);
         if (!userData) {
           console.error("Could not fetch user data");
           return;
         }
 
-        console.log("Loaded user data:", userData); // Debug log
+        console.log("Loaded user data:", userData);
 
         // Update basic information
         document.querySelector(".profile-pic").src =
@@ -243,97 +198,27 @@
         const socialIconsContainer = document.querySelector(".social-icons");
         socialIconsContainer.innerHTML = ""; // Clear existing icons
 
-        // Create rows for social accounts
         const socialAccounts = userData.socialAccounts || [];
-        const ITEMS_PER_ROW = 3;
+        socialAccounts.forEach((account) => {
+          const iconMap = {
+            github: "https://img.icons8.com/fluency/48/github.png",
+            linkedin: "https://img.icons8.com/color/48/linkedin.png",
+            instagram: "https://img.icons8.com/color/48/instagram-new.png",
+            youtube: "https://img.icons8.com/color/48/youtube-play.png",
+          };
 
-        for (let i = 0; i < socialAccounts.length; i += ITEMS_PER_ROW) {
-          const rowAccounts = socialAccounts.slice(i, i + ITEMS_PER_ROW);
-          const row = document.createElement("div");
-          row.className = "row";
-
-          rowAccounts.forEach((account) => {
-            const col = document.createElement("div");
-            col.className = "col";
-
-            // Map account types to icon URLs
-            const iconMap = {
-              github: "https://img.icons8.com/fluency/48/github.png",
-              linkedin: "https://img.icons8.com/color/48/linkedin.png",
-              instagram: "https://img.icons8.com/color/48/instagram-new.png",
-              youtube: "https://img.icons8.com/color/48/youtube-play.png",
-              // Add more mappings as needed
-            };
-
-            col.innerHTML = `
-              <a href="${account.handle}" target="_blank">
-                <img src="${
-                  iconMap[account.accountType.toLowerCase()] ||
-                  "https://img.icons8.com/color/48/link.png"
-                }" 
-                     alt="${account.accountType}">
-              </a>
-            `;
-            row.appendChild(col);
-          });
-
-          socialIconsContainer.appendChild(row);
-        }
-
-        // Add default contact methods
-        const contactRow = document.createElement("div");
-        contactRow.className = "row mt-3";
-        contactRow.innerHTML = `
-          <div class="col">
-            <a href="https://wa.me/${userData.whatsapp}"><img src="https://img.icons8.com/fluency/48/whatsapp.png" alt="WhatsApp"></a>
-          </div>
-          <div class="col">
-            <a href="mailto:${userData.email}"><img src="https://img.icons8.com/color/48/email.png" alt="Email"></a>
-          </div>
-          <div class="col">
-            <a href="#"><img src="https://img.icons8.com/color/48/address.png" alt="Address"></a>
-          </div>
-        `;
-        socialIconsContainer.appendChild(contactRow);
-
-        // Add services section if there are any
-        if (userData.services && userData.services.length > 0) {
-          const servicesSection = document.createElement("div");
-          servicesSection.className = "container mt-4";
-          servicesSection.innerHTML =
-            '<h4 class="text-center mb-3">Services</h4>';
-
-          const servicesGrid = document.createElement("div");
-          servicesGrid.className = "row g-3";
-
-          userData.services.forEach((service) => {
-            const serviceCol = document.createElement("div");
-            serviceCol.className = "col-md-4";
-            serviceCol.innerHTML = `
-              <div class="card bg-dark text-white">
-                ${
-                  service.productImage
-                    ? `<img src="${service.productImage}" class="card-img-top" alt="${service.name}">`
-                    : ""
-                }
-                <div class="card-body">
-                  <h5 class="card-title">${service.name}</h5>
-                  <p class="card-text">${service.description}</p>
-                  <p class="card-text"><small class="text-muted">Price: $${
-                    service.price
-                  }</small></p>
-                </div>
-              </div>
-            `;
-            servicesGrid.appendChild(serviceCol);
-          });
-
-          servicesSection.appendChild(servicesGrid);
-          document.body.appendChild(servicesSection);
-        }
+          const socialLink = `
+            <a href="${account.handle}" target="_blank">
+              <img src="${
+                iconMap[account.accountType.toLowerCase()] ||
+                "https://img.icons8.com/color/48/link.png"
+              }" alt="${account.accountType}">
+            </a>
+          `;
+          socialIconsContainer.innerHTML += socialLink;
+        });
       }
 
-      // Load data when page loads
       document.addEventListener("DOMContentLoaded", loadUserData);
     </script>
   </body>

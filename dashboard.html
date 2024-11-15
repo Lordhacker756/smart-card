@@ -74,9 +74,9 @@
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
-    
+
     <div id="alertMessage" class="alert alert-floating"></div>
-    
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container">
         <a class="navbar-brand" href="#">Smart Business Card</a>
@@ -104,6 +104,17 @@
         <!-- Basic Information -->
         <div class="form-section">
           <h4 class="mb-3">Basic Information</h4>
+          <div class="mb-3">
+            <label class="form-label">Your Card URL</label>
+            <input type="text" class="form-control" name="cardUrl" readonly />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Card Theme</label>
+            <select class="form-control" name="activeTheme">
+              <option value="theme1">Theme 1</option>
+              <option value="theme2">Theme 2</option>
+            </select>
+          </div>
           <div class="mb-3">
             <label class="form-label">Name</label>
             <input type="text" class="form-control" name="name" />
@@ -185,26 +196,43 @@
         <div class="form-section">
           <h4 class="mb-3">Social Accounts</h4>
           <div id="socialAccounts">
-            <div class="row mb-3">
-              <div class="col">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Account Type"
-                />
-              </div>
-              <div class="col">
-                <input type="text" class="form-control" placeholder="Handle" />
-              </div>
+            <div class="mb-3">
+              <label class="form-label">Instagram</label>
+              <input
+                type="text"
+                class="form-control"
+                name="instagram"
+                placeholder="Instagram handle"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Facebook</label>
+              <input
+                type="text"
+                class="form-control"
+                name="facebook"
+                placeholder="Facebook profile URL"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">LinkedIn</label>
+              <input
+                type="text"
+                class="form-control"
+                name="linkedin"
+                placeholder="LinkedIn profile URL"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Website</label>
+              <input
+                type="url"
+                class="form-control"
+                name="website"
+                placeholder="Your website URL"
+              />
             </div>
           </div>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            onclick="addSocialAccount()"
-          >
-            Add More
-          </button>
         </div>
 
         <!-- Services -->
@@ -352,7 +380,15 @@
 
           const savedProfile = await fetchUserProfile(userData.id);
           if (savedProfile) {
-            console.log("Loaded profile:", savedProfile); // Debug log
+            console.log("Loaded profile:", savedProfile);
+
+            // Set URL
+            document.querySelector('[name="cardUrl"]').value =
+              savedProfile.url || "";
+
+            // Set theme
+            document.querySelector('[name="activeTheme"]').value =
+              savedProfile.activeTheme || "theme1";
 
             // Basic Information
             document.querySelector('[name="headline"]').value =
@@ -361,6 +397,18 @@
               savedProfile.whatsapp || "";
             document.querySelector('[name="address"]').value =
               savedProfile.address || "";
+
+            // Social Accounts
+            if (savedProfile.socialAccounts) {
+              savedProfile.socialAccounts.forEach((account) => {
+                const input = document.querySelector(
+                  `[name="${account.accountType.toLowerCase()}"]`
+                );
+                if (input) {
+                  input.value = account.handle || "";
+                }
+              });
+            }
 
             // Images
             if (savedProfile.avatar) {
@@ -371,35 +419,6 @@
                 "backgroundImage",
                 savedProfile.backgroundImage
               );
-            }
-
-            // Social Accounts
-            if (
-              savedProfile.socialAccounts &&
-              savedProfile.socialAccounts.length > 0
-            ) {
-              const socialAccountsDiv =
-                document.getElementById("socialAccounts");
-              if (socialAccountsDiv) {
-                socialAccountsDiv.innerHTML = ""; // Clear default row
-                savedProfile.socialAccounts.forEach((account) => {
-                  const newAccount = document.createElement("div");
-                  newAccount.className = "row mb-3";
-                  newAccount.innerHTML = `
-                    <div class="col">
-                      <input type="text" class="form-control" placeholder="Account Type" value="${
-                        account.accountType || ""
-                      }">
-                    </div>
-                    <div class="col">
-                      <input type="text" class="form-control" placeholder="Handle" value="${
-                        account.handle || ""
-                      }">
-                    </div>
-                  `;
-                  socialAccountsDiv.appendChild(newAccount);
-                });
-              }
             }
 
             // Services
@@ -458,7 +477,7 @@
       async function fetchUserProfile(userId) {
         try {
           const response = await fetch(
-            `https://rfc-backend.onrender.com/user/get/${userId}`,
+            `http://localhost:5000/user/get/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -479,7 +498,7 @@
 
         try {
           const response = await fetch(
-            "https://rfc-backend.onrender.com/util/upload-image",
+            "http://localhost:5000/util/upload-image",
             {
               method: "POST",
               body: formData,
@@ -536,14 +555,17 @@
           }
 
           // Collect social accounts
-          const socialAccounts = Array.from(
-            document.getElementById("socialAccounts").children
-          )
-            .map((row) => ({
-              accountType: row.querySelector(".col:nth-child(1) input").value,
-              handle: row.querySelector(".col:nth-child(2) input").value,
+          const socialAccounts = [
+            "instagram",
+            "facebook",
+            "linkedin",
+            "website",
+          ]
+            .map((type) => ({
+              accountType: type,
+              handle: form[type].value,
             }))
-            .filter((account) => account.accountType && account.handle);
+            .filter((account) => account.handle);
 
           // Collect services
           const services = [];
@@ -593,12 +615,13 @@
             whatsapp: form.whatsapp.value,
             email: form.email.value,
             address: form.address.value,
+            activeTheme: form.activeTheme.value,
             socialAccounts,
             services,
           };
 
           const response = await fetch(
-            `https://rfc-backend.onrender.com/user/${userData.id}`,
+            `http://localhost:5000/user/${userData.id}`,
             {
               method: "POST",
               headers: {

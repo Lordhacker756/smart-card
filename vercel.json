@@ -1,0 +1,3 @@
+{
+  "rewrites": [{ "source": "/theme/:id", "destination": "/theme.html" }]
+}

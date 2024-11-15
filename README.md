@@ -44,7 +44,7 @@ A modern digital business card solution that allows users to create, manage, and
 
 ### 3. Profile Theme (theme.html)
 - Public-facing profile page
-- Accessible via unique URL: `https://rfc-backend.onrender.com/theme.html?userId=[USER_ID]`
+- Accessible via unique URL: `http://localhost:5000/theme.html?userId=[USER_ID]`
 - Displays:
   - Profile picture and background
   - Contact information
