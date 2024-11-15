@@ -374,7 +374,7 @@
         console.log("Fetching user data...");
         try {
           const jwt = localStorage.getItem("jwt");
-          const response = await fetch(`${CONFIG.API_BASE_URL}/user/me`, {
+          const response = await fetch(`${CONFIG.API_BASE_URL}/user`, {
             headers: {
               Authorization: `Bearer ${jwt}`,
             },
