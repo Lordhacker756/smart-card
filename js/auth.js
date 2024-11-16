@@ -4,10 +4,10 @@ function isAuthenticated() {
 
 function redirectToLogin() {
     alert('Please login to access dashboard');
-    window.location.href = '/login.html';
+    window.location.href = '/login';
 }
 
 function logout() {
     localStorage.removeItem('jwt');
-    window.location.href = '/login.html';
+    window.location.href = '/login';
 } 
