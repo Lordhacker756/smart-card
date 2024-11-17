@@ -333,13 +333,13 @@
           const services = userData.services || [];
           services.forEach((service) => {
             const serviceCard = `
-              <div class="bg-light p-4 mt-4">
+              <div class="bg-dark p-4 mt-4">
                 <h5 class="fw-bold">${service.name}</h5>
                 <img src="${service.productImage}" alt="${service.name}" class="img-fluid mb-3">
                 <p class="text-muted">${service.description}</p>
                 <div class="d-flex align-items-center">
                   <span class="me-3">Price: $${service.price}</span>
-                  <button class="btn btn-dark">Enquiry</button>
+                  <button class="btn btn-success">Enquiry</button>
                 </div>
               </div>
             `;
