@@ -125,10 +125,44 @@
       .social-icons .row {
         margin-bottom: 15px;
       }
+
+      .loader-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #121212;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+
+      .loader {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #00bfff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
 
   <body>
+    <div id="loader" class="loader-container">
+      <div class="loader"></div>
+    </div>
     <!-- Banner Section -->
     <div class="banner">
       <img class="img-fluid" src="banner-test.png" alt="banner" />
@@ -155,7 +189,8 @@
     <div class="container social-icons">
       <!-- Social media icons will populate here -->
     </div>
-    <!-- Bootstrap Contact Section -->
+
+    <!-- All services will be rendered here -->
     <section class="container bg-dark text-white py-4">
       <div class="container">
         <div class="d-flex flex-column align-items-start">
@@ -188,26 +223,11 @@
     <!-- third section -->
     <section class="py-5">
       <div class="container">
-        <!-- Heading -->
         <h3 class="text-center fw-bold">PRODUCTS AND SERVICES</h3>
         <hr class="mx-auto" style="width: 50px; border-top: 2px solid red" />
 
-        <!-- Product Card -->
-        <div class="bg-light p-4 mt-4">
-          <h5 class="fw-bold">RR GHOST 2019</h5>
-
-          <!-- Image Section -->
-          <img
-            src="https://via.placeholder.com/500x300"
-            alt="RR Ghost 2019"
-            class="img-fluid mb-3"
-          />
-
-          <!-- Price and Inquiry Button -->
-          <div class="d-flex align-items-center">
-            <span class="me-3">Price:</span>
-            <button class="btn btn-dark">Enquiry</button>
-          </div>
+        <div id="servicesContainer">
+          <!-- Services will be populated here -->
         </div>
       </div>
     </section>
@@ -235,59 +255,109 @@
       }
 
       async function loadUserData() {
-        // Extract the user URL from the path
-        const userUrl = window.location.pathname.split("/").pop();
-        console.log("User URL:", userUrl, window.location.pathname);
+        const loader = document.getElementById("loader");
 
-        if (!userUrl) {
-          console.error("No user URL provided in the path");
-          return;
+        try {
+          // Extract the user URL from the path
+          const userUrl = window.location.pathname.split("/").pop();
+          console.log("User URL:", userUrl, window.location.pathname);
+
+          if (!userUrl) {
+            console.error("No user URL provided in the path");
+            return;
+          }
+
+          let userData = await fetchUserProfile(userUrl);
+          if (!userData) {
+            console.error("Could not fetch user data");
+            return;
+          }
+          userData = userData.data;
+          console.log("Loaded user data:", userData);
+
+          // Update basic information
+          document.querySelector(".profile-pic").src =
+            userData.avatar || "profile.png";
+          document.querySelector(".banner img").src =
+            userData.backgroundImage || "banner-test.png";
+          document.querySelector(".profile-name").textContent =
+            userData.name || "";
+          document.querySelector(".profile-title").textContent =
+            userData.headline || "";
+
+          // Update contact information
+          document.querySelector(
+            'a[href^="tel:"]'
+          ).href = `tel:${userData.whatsapp}`;
+          document.querySelector('a[href^="tel:"]').textContent =
+            userData.whatsapp;
+          document.querySelector(
+            'a[href^="mailto:"]'
+          ).href = `mailto:${userData.email}`;
+          document.querySelector('a[href^="mailto:"]').textContent =
+            userData.email;
+          document.querySelector(".d-flex.align-items-center p").textContent =
+            userData.address || "";
+
+          // Update social accounts
+          const socialIconsContainer = document.querySelector(".social-icons");
+          socialIconsContainer.innerHTML = ""; // Clear existing icons
+
+          const socialAccounts = userData.socialAccounts || [];
+          socialAccounts.forEach((account) => {
+            const iconMap = {
+              github: "https://img.icons8.com/fluency/48/github.png",
+              linkedin: "https://img.icons8.com/color/48/linkedin.png",
+              instagram: "https://img.icons8.com/color/48/instagram-new.png",
+              youtube: "https://img.icons8.com/color/48/youtube-play.png",
+              facebook: "https://img.icons8.com/color/48/facebook.png",
+            };
+
+            const socialLink = `
+              <a href="${account.handle}" target="_blank">
+                <img src="${
+                  iconMap[account.accountType.toLowerCase()] ||
+                  "https://img.icons8.com/color/48/link.png"
+                }" 
+                     alt="${account.accountType}">
+              </a>
+            `;
+            socialIconsContainer.innerHTML += socialLink;
+          });
+
+          // Update services
+          const servicesContainer =
+            document.getElementById("servicesContainer");
+          servicesContainer.innerHTML = ""; // Clear existing services
+
+          const services = userData.services || [];
+          services.forEach((service) => {
+            const serviceCard = `
+              <div class="bg-light p-4 mt-4">
+                <h5 class="fw-bold">${service.name}</h5>
+                <img src="${service.productImage}" alt="${service.name}" class="img-fluid mb-3">
+                <p class="text-muted">${service.description}</p>
+                <div class="d-flex align-items-center">
+                  <span class="me-3">Price: $${service.price}</span>
+                  <button class="btn btn-dark">Enquiry</button>
+                </div>
+              </div>
+            `;
+            servicesContainer.innerHTML += serviceCard;
+          });
+        } catch (error) {
+          console.error("Error loading user data:", error);
+        } finally {
+          // Hide loader
+          loader.style.display = "none";
         }
-
-        let userData = await fetchUserProfile(userUrl);
-        if (!userData) {
-          console.error("Could not fetch user data");
-          return;
-        }
-        userData = userData.data;
-        console.log("Loaded user data:", userData);
-
-        // Update basic information
-        document.querySelector(".profile-pic").src =
-          userData.avatar || "profile.png";
-        document.querySelector(".banner img").src =
-          userData.backgroundImage || "banner-test.png";
-        document.querySelector(".profile-name").textContent =
-          userData.name || "";
-        document.querySelector(".profile-title").textContent =
-          userData.headline || "";
-
-        // Update social accounts
-        const socialIconsContainer = document.querySelector(".social-icons");
-        socialIconsContainer.innerHTML = ""; // Clear existing icons
-
-        const socialAccounts = userData.socialAccounts || [];
-        socialAccounts.forEach((account) => {
-          const iconMap = {
-            github: "https://img.icons8.com/fluency/48/github.png",
-            linkedin: "https://img.icons8.com/color/48/linkedin.png",
-            instagram: "https://img.icons8.com/color/48/instagram-new.png",
-            youtube: "https://img.icons8.com/color/48/youtube-play.png",
-          };
-
-          const socialLink = `
-            <a href="${account.handle}" target="_blank">
-              <img src="${
-                iconMap[account.accountType.toLowerCase()] ||
-                "https://img.icons8.com/color/48/link.png"
-              }" alt="${account.accountType}">
-            </a>
-          `;
-          socialIconsContainer.innerHTML += socialLink;
-        });
       }
 
-      document.addEventListener("DOMContentLoaded", loadUserData);
+      // Make sure loader is shown before loading data
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("loader").style.display = "flex";
+        loadUserData();
+      });
     </script>
   </body>
 </html>
