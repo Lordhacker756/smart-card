@@ -288,6 +288,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+      let userId = null;
       function addSocialAccount() {
         const socialAccounts = document.getElementById("socialAccounts");
         const newAccount = document.createElement("div");
@@ -386,6 +387,7 @@
 
           let userData = await response.json();
           userData = userData.data;
+          userId = userData._id;
           console.log("user data from API:", userData);
 
           // Basic Information
@@ -529,7 +531,7 @@
           if (avatarInput.files[0]) {
             avatarUrl = await uploadImage(avatarInput.files[0]);
           } else if (!avatarInput.dataset.removeImage) {
-            const response = await fetch(`${CONFIG.API_BASE_URL}/user/me`, {
+            const response = await fetch(`${CONFIG.API_BASE_URL}/user`, {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("jwt")}`,
               },
@@ -541,7 +543,7 @@
           if (backgroundInput.files[0]) {
             backgroundUrl = await uploadImage(backgroundInput.files[0]);
           } else if (!backgroundInput.dataset.removeImage) {
-            const response = await fetch(`${CONFIG.API_BASE_URL}/user/me`, {
+            const response = await fetch(`${CONFIG.API_BASE_URL}/user`, {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("jwt")}`,
               },
@@ -616,14 +618,17 @@
             services,
           };
 
-          const response = await fetch(`${CONFIG.API_BASE_URL}/user/me`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-            },
-            body: JSON.stringify(formData),
-          });
+          const response = await fetch(
+            `${CONFIG.API_BASE_URL}/user/${userId}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+              },
+              body: JSON.stringify(formData),
+            }
+          );
 
           const data = await response.json();
           if (!response.ok) throw new Error(data.message);
