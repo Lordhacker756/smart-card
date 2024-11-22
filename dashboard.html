@@ -97,6 +97,9 @@
             <li class="nav-item" id="registerLink" style="display: none">
               <a class="nav-link" href="/register">Create Account</a>
             </li>
+            <li class="nav-item" id="allUsersLink" style="display: none">
+              <a class="nav-link" href="/all-users">All Users</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -498,6 +501,7 @@
           console.log("role", role);
           if (role === "admin" || role === "moderator") {
             document.getElementById("registerLink").style.display = "block";
+            document.getElementById("allUsersLink").style.display = "block";
           }
         } catch (error) {
           console.error("Error loading user data:", error);
