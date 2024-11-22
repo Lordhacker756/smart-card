@@ -94,6 +94,12 @@
             <li class="nav-item">
               <a class="nav-link" href="#" onclick="logout()">Logout</a>
             </li>
+            <li class="nav-item" id="registerLink" style="display: none">
+              <a class="nav-link" href="/register">Create Account</a>
+            </li>
+            <li class="nav-item" id="allUsersLink" style="display: none">
+              <a class="nav-link" href="/all-users">All Users</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -173,6 +179,14 @@
                 </button>
               </div>
             </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <input type="text" class="form-control" name="role" readonly />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Valid Till</label>
+            <input type="text" class="form-control" name="validTill" readonly />
           </div>
         </div>
 
@@ -287,6 +301,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
     <script>
       let userId = null;
       function addSocialAccount() {
@@ -416,7 +432,7 @@
                 `[name="${account.accountType.toLowerCase()}"]`
               );
               if (input) {
-                input.value = account.handle || "";
+                input.value = account.profileUrl || "";
               }
             });
           }
@@ -474,6 +490,18 @@
                 servicesDiv.appendChild(newService);
               });
             }
+          }
+
+          document.querySelector('[name="role"]').value = userData.role || "";
+          document.querySelector('[name="validTill"]').value =
+            new Date(userData.validTill).toLocaleDateString() || "";
+
+          // Show register link for admin/moderator
+          const role = userData.role;
+          console.log("role", role);
+          if (role === "admin" || role === "moderator") {
+            document.getElementById("registerLink").style.display = "block";
+            document.getElementById("allUsersLink").style.display = "block";
           }
         } catch (error) {
           console.error("Error loading user data:", error);
@@ -559,11 +587,25 @@
             "linkedin",
             "website",
           ]
-            .map((type) => ({
-              accountType: type,
-              handle: form[type].value,
-            }))
-            .filter((account) => account.handle);
+            .map((type) => {
+              const value = form[type].value;
+              // Only include accounts that have a value
+              if (value) {
+                return {
+                  accountType: type,
+                  profileUrl:
+                    type === "instagram"
+                      ? `https://instagram.com/${value}`
+                      : type === "facebook"
+                      ? `https://facebook.com/${value}`
+                      : type === "linkedin"
+                      ? `https://linkedin.com/in/${value}`
+                      : value,
+                };
+              }
+              return null;
+            })
+            .filter((account) => account !== null); // Remove null entries
 
           // Collect services
           const services = [];
@@ -617,6 +659,8 @@
             socialAccounts,
             services,
           };
+
+          console.log(formData);
 
           const response = await fetch(
             `${CONFIG.API_BASE_URL}/user/${userId}`,

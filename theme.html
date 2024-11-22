@@ -3,129 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile Card UI</title>
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <!-- Update the order of script loading -->
-    <script src="/js/config.js"></script>
-    <script src="/js/auth.js"></script>
+    <title>Loading Profile...</title>
     <style>
-      body {
-        background-color: #121212;
-        color: white;
-        font-family: "Arial", sans-serif;
-      }
-
-      .container {
-        justify-items: center;
-      }
-
-      .banner {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-bottom: 3px solid #00bfff;
-      }
-
-      .profile-section {
-        text-align: center;
-        margin-top: -25px;
-      }
-
-      .profile-pic {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        border: 3px solid #00bfff;
-      }
-
-      .profile-name {
-        font-size: 1.5rem;
-        margin-top: 10px;
-      }
-
-      .profile-title {
-        font-size: 1rem;
-        color: #b0b0b0;
-      }
-
-      .profile-description {
-        font-size: 0.9rem;
-        padding: 10px;
-        color: #c5c5c5;
-      }
-
-      .btn-group {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-      }
-
-      .btn-custom {
-        background-color: #1c1c1e;
-        color: white;
-        border: 1px solid #2c2c2e;
-        border-radius: 20px;
-      }
-
-      .btn-custom:hover {
-        background-color: #2a2a2e;
-      }
-
-      .social-icons {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-        margin-top: 20px;
-      }
-
-      .social-icons a {
-        width: 70px;
-        height: 70px;
-        background-color: #2a2a2a;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 2rem;
-        margin-bottom: 10px;
-      }
-
-      .social-icons a:hover {
-        background-color: #444444;
-      }
-
-      .social-icons img {
-        width: 40px;
-        height: 40px;
-      }
-
-      .card {
-        transition: transform 0.2s;
-        height: 100%;
-      }
-
-      .card:hover {
-        transform: translateY(-5px);
-      }
-
-      .card-img-top {
-        height: 200px;
-        object-fit: cover;
-      }
-
-      .social-icons {
-        margin-bottom: 20px;
-      }
-
-      .social-icons .row {
-        margin-bottom: 15px;
-      }
-
       .loader-container {
         position: fixed;
         top: 0;
@@ -158,206 +37,62 @@
       }
     </style>
   </head>
-
   <body>
     <div id="loader" class="loader-container">
       <div class="loader"></div>
     </div>
-    <!-- Banner Section -->
-    <div class="banner">
-      <img class="img-fluid" src="banner-test.png" alt="banner" />
-    </div>
-
-    <!-- Profile Section -->
-    <div class="container profile-section">
-      <img src="profile.png" alt="Profile Picture" class="profile-pic" />
-      <div class="profile-name">Abu Hamza</div>
-      <div class="profile-title">C.M.O @ Enemy Group</div>
-      <p class="profile-description">
-        Co-Creating Enemy Group | Replacing your old paper card with a smarter
-        and instant way of networking.
-      </p>
-
-      <!-- Action Buttons -->
-      <div class="btn-group mb-3">
-        <button class="btn btn-custom">Connect With Me</button>
-        <button id="save" class="btn btn-custom">Save To Phone</button>
-      </div>
-    </div>
-
-    <!-- Social Media Links Section -->
-    <div class="container social-icons">
-      <!-- Social media icons will populate here -->
-    </div>
-
-    <!-- All services will be rendered here -->
-    <section class="container bg-dark text-white py-4">
-      <div class="container">
-        <div class="d-flex flex-column align-items-start">
-          <!-- Phone -->
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-telephone-fill fs-4 me-3"></i>
-            <a href="tel:+971585222111" class="text-white text-decoration-none"
-              >+971 585222111</a
-            >
-          </div>
-          <!-- Email -->
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-envelope-fill fs-4 me-3"></i>
-            <a
-              href="mailto:b12.dxb12@gmail.com"
-              class="text-white text-decoration-none"
-              >b12.dxb12@gmail.com</a
-            >
-          </div>
-          <!-- Address -->
-          <div class="d-flex align-items-center">
-            <i class="bi bi-geo-alt-fill fs-4 me-3"></i>
-            <p class="mb-0">
-              11A Street, Al Quoz - Al Quoz Industrial Area 3, Dubai
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- third section -->
-    <section class="py-5">
-      <div class="container">
-        <h3 class="text-center fw-bold">PRODUCTS AND SERVICES</h3>
-        <hr class="mx-auto" style="width: 50px; border-top: 2px solid red" />
-
-        <div id="servicesContainer">
-          <!-- Services will be populated here -->
-        </div>
-      </div>
-    </section>
-    <!-- Bootstrap JS -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div id="content"></div>
 
     <script>
-      async function fetchUserProfile(userUrl) {
-        console.log("Fetching user profile for user URL:", userUrl);
-        try {
-          const response = await fetch(
-            `${CONFIG.API_BASE_URL}/user/url/${userUrl}`
-          );
-          console.log("User Data:: ", response);
-          if (!response.ok) return null;
-          return await response.json();
-        } catch (error) {
-          console.error("Error fetching profile:", error);
-          return null;
-        }
-      }
-
-      async function loadUserData() {
-        const loader = document.getElementById("loader");
-
+      async function loadProfile() {
         try {
           // Extract the user URL from the path
-          const userUrl = window.location.pathname.split("/").pop();
-          console.log("User URL:", userUrl, window.location.pathname);
+          // const userUrl = window.location.pathname.split("/").pop();
+          const userUrl = "user-baba";
 
-          if (!userUrl) {
-            console.error("No user URL provided in the path");
-            return;
+          // Fetch the HTML from your backend
+          const response = await fetch(
+            `${CONFIG.API_BASE_URL}/user/url/${userUrl}`,
+            {
+              headers: {
+                Accept: "text/html",
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
           }
 
-          let userData = await fetchUserProfile(userUrl);
-          if (!userData) {
-            console.error("Could not fetch user data");
-            return;
+          // Get the HTML text
+          const html = await response.text();
+
+          // Insert the HTML into the content div
+          document.getElementById("content").innerHTML = html;
+
+          // Update the page title if it exists in the fetched HTML
+          const titleMatch = html.match(/<title>(.*?)<\/title>/);
+          if (titleMatch && titleMatch[1]) {
+            document.title = titleMatch[1];
           }
-          userData = userData.data;
-          console.log("Loaded user data:", userData);
 
-          // Update basic information
-          document.querySelector(".profile-pic").src =
-            userData.avatar || "profile.png";
-          document.querySelector(".banner img").src =
-            userData.backgroundImage || "banner-test.png";
-          document.querySelector(".profile-name").textContent =
-            userData.name || "";
-          document.querySelector(".profile-title").textContent =
-            userData.headline || "";
-
-          // Update contact information
-          document.querySelector(
-            'a[href^="tel:"]'
-          ).href = `tel:${userData.whatsapp}`;
-          document.querySelector('a[href^="tel:"]').textContent =
-            userData.whatsapp;
-          document.querySelector(
-            'a[href^="mailto:"]'
-          ).href = `mailto:${userData.email}`;
-          document.querySelector('a[href^="mailto:"]').textContent =
-            userData.email;
-          document.querySelector(".d-flex.align-items-center p").textContent =
-            userData.address || "";
-
-          // Update social accounts
-          const socialIconsContainer = document.querySelector(".social-icons");
-          socialIconsContainer.innerHTML = ""; // Clear existing icons
-
-          const socialAccounts = userData.socialAccounts || [];
-          socialAccounts.forEach((account) => {
-            const iconMap = {
-              github: "https://img.icons8.com/fluency/48/github.png",
-              linkedin: "https://img.icons8.com/color/48/linkedin.png",
-              instagram: "https://img.icons8.com/color/48/instagram-new.png",
-              youtube: "https://img.icons8.com/color/48/youtube-play.png",
-              facebook: "https://img.icons8.com/color/48/facebook.png",
-            };
-
-            const socialLink = `
-              <a href="${account.handle}" target="_blank">
-                <img src="${
-                  iconMap[account.accountType.toLowerCase()] ||
-                  "https://img.icons8.com/color/48/link.png"
-                }" 
-                     alt="${account.accountType}">
-              </a>
-            `;
-            socialIconsContainer.innerHTML += socialLink;
-          });
-
-          // Update services
-          const servicesContainer =
-            document.getElementById("servicesContainer");
-          servicesContainer.innerHTML = ""; // Clear existing services
-
-          const services = userData.services || [];
-          services.forEach((service) => {
-            const serviceCard = `
-              <div class="bg-dark p-4 mt-4">
-                <h5 class="fw-bold">${service.name}</h5>
-                <img src="${service.productImage}" alt="${service.name}" class="img-fluid mb-3">
-                <p class="text-muted">${service.description}</p>
-                <div class="d-flex align-items-center">
-                  <span class="me-3">Price: $${service.price}</span>
-                  <button class="btn btn-success">Enquiry</button>
-                </div>
-              </div>
-            `;
-            servicesContainer.innerHTML += serviceCard;
-          });
+          // Remove the loader
+          document.getElementById("loader").style.display = "none";
         } catch (error) {
-          console.error("Error loading user data:", error);
-        } finally {
-          // Hide loader
-          loader.style.display = "none";
+          console.error("Error loading profile:", error);
+          document.getElementById("content").innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: white;">
+                        <h2>Error Loading Profile</h2>
+                        <p>Sorry, we couldn't load this profile. Please try again later.</p>
+                    </div>
+                `;
+          document.getElementById("loader").style.display = "none";
         }
       }
 
-      // Make sure loader is shown before loading data
-      document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("loader").style.display = "flex";
-        loadUserData();
-      });
+      // Load the profile when the page loads
+      document.addEventListener("DOMContentLoaded", loadProfile);
     </script>
+    <script src="/js/config.js"></script>
   </body>
 </html>
