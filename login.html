@@ -58,9 +58,6 @@
             ></span>
             <span id="loginButtonText">Login</span>
           </button>
-          <p class="text-center mt-3">
-            Don't have an account? <a href="/register">Register here</a>
-          </p>
         </form>
 
         <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -111,6 +108,7 @@
               }).showToast();
 
               localStorage.setItem("jwt", data.token);
+              localStorage.setItem("user", JSON.stringify(data.user));
               window.location.href = "/dashboard";
             } catch (error) {
               // Show error toast
