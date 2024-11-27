@@ -47,8 +47,9 @@
       async function loadProfile() {
         try {
           // Extract the user URL from the path
-          // const userUrl = window.location.pathname.split("/").pop();
-          const userUrl = "user-baba";
+          const userUrl = window.location.pathname.split("/").pop();
+          // const userUrl = "user-baba";
+          console.log(`${CONFIG.API_BASE_URL}/user/url/${userUrl}  [GET]`);
 
           // Fetch the HTML from your backend
           const response = await fetch(
