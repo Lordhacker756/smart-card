@@ -47,8 +47,9 @@
       async function loadProfile() {
         try {
           // Extract the user URL from the path
-          // const userUrl = window.location.pathname.split("/").pop();
-          const userUrl = "user-baba";
+          const userUrl = window.location.pathname.split("/").pop();
+          // const userUrl = "user-baba";
+          console.log(`${CONFIG.API_BASE_URL}/user/url/${userUrl}  [GET]`);
 
           // Fetch the HTML from your backend
           const response = await fetch(
@@ -60,7 +61,10 @@
             }
           );
 
+          console.log(response);
+
           if (!response.ok) {
+            console.log(`HTTP error! status: ${response.status}`);
             throw new Error(`HTTP error! status: ${response.status}`);
           }
 
@@ -82,8 +86,8 @@
           console.error("Error loading profile:", error);
           document.getElementById("content").innerHTML = `
                     <div style="text-align: center; padding: 20px; color: white;">
-                        <h2>Error Loading Profile</h2>
-                        <p>Sorry, we couldn't load this profile. Please try again later.</p>
+                        <h2 style="color:black">This profile does not exist</h2>
+                        <p style="color:black">Sorry, we couldn't load this profile. Please try again later.</p>
                     </div>
                 `;
           document.getElementById("loader").style.display = "none";
